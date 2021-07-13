@@ -1,0 +1,146 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@600&display=swap');
+
+body {
+    font-family: "Roboto", sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+}
+
+h1 {
+    font-family: "Quicksand", cursive;
+    font-weight: 600;
+    font-size: 2em;
+    line-height: 1.5em;
+    font-weight: 300;
+}
+
+h2 {
+    font-family: "Quicksand", cursive;
+    font-weight: 600;
+    font-size: 1.25em;
+    line-height: 1.1em;
+}
+
+section {
+    padding-top: 0.3em;
+    padding-bottom: 2em;
+    border-top: 1px solid #555555;
+}
+
+button {
+    display: inline-block;
+    background-color: #ffffff;
+    color: #000000;
+    border: 2px solid #555555;
+    border-radius: 4px;
+    padding: 1em 2em;
+    text-align: center;
+    text-decoration: none;
+    font-size: 1em;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #555555;
+    color: #ffffff;
+}
+
+label {
+    display: inline-block;
+    width: 200px;
+    text-align: end;
+}
+
+input#columns, input#rows {
+    width: 5em;
+}
+
+.title {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.button-bar {
+    padding: 1em 1em 1em 1em;
+    text-align: end;
+}
+
+#game-first-player > .button-bar {
+    margin: 5em auto 5em auto;
+    text-align: center;
+}
+
+.field-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 1em auto 1em auto;
+}
+
+.field-header > div {
+    display: flex;
+}
+
+.field-header > div:last-of-type {
+    margin-left: auto;
+    margin-right: 0;
+}
+
+.field-view {
+    margin: 5em auto 4em auto;
+    text-align: center;
+}
+
+.game-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 1px;
+}
+
+.game-stats-grid > div {
+    display: flex;
+    flex-direction: column;
+}
+
+.grid-label {
+    padding-right: 0.4em;
+}
+
+.grid-wrapper {
+    display: inline-block;
+}
+
+#grid {
+    display: grid;
+    grid-gap: 1px;
+    grid-template-columns: repeat(3, 3em);
+    grid-template-rows: repeat(3, 3em);
+    background: #000000;
+    border: 1px solid #000000;
+}
+
+#grid > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: "Quicksand", cursive;
+    font-weight: 600;
+    font-size: 1.5em;
+    color: #c8c8c8;
+    background: #ffffff;
+    cursor: pointer;
+}
+
+#grid > div.player-x {
+    color: #ff0000;
+}
+
+#grid > div.player-o {
+    color: #0000ff;
+}
+
+#footer {
+    border-top: 1px solid #555555;
+}
