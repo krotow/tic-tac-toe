@@ -178,7 +178,7 @@ function drawGameField() {
     removeAllChildNodes( grid );
 
     grid.style.gridTemplateColumns = 'repeat(' + gameState.fieldColumns + ', 3em)';
-    grid.style.gridTemplateRows = 'repeat(' + rows + ', 3em)';
+    grid.style.gridTemplateRows = 'repeat(' + gameState.fieldRows + ', 3em)';
 
     for( let r = 0; r < gameState.fieldRows; r++ ) {
         for( let c = 0; c < gameState.fieldColumns; c++ ) {
@@ -192,10 +192,6 @@ function drawGameField() {
             } );
         }
     }
-}
-
-function getGameState() {
-    return gameState;
 }
 
 function setGameState( state ) {
@@ -270,6 +266,9 @@ function onBeginGame() {
     hideDocElemById( 'button-begin' );
     hideDocElemById( 'button-continue' );
     showDocElemById( 'button-new' );
+
+    getDocElemById( 'button-first-x' ).textContent = gameState.playerX.name + ' (X)'
+    getDocElemById( 'button-first-o' ).textContent = gameState.playerO.name + ' (O)'
     showDocElemById( 'game-first-player' );
 }
 
@@ -308,10 +307,17 @@ function onFinishGame() {
             setGameInfoMessage( 'Spēle beidzās neizšķirti.' );
             break;
     }
+
+    // Swap players for next turn
+    if ( gameState.firstPlayer == PlayerMark.X ) {
+        gameState.firstPlayer = PlayerMark.O;
+    } else {
+        gameState.firstPlayer = PlayerMark.X;
+    }
 }
 
 function onCellClick( el ) {
-    if ( getGameState() == GameState.Finished ) {
+    if ( gameState.state == GameState.Finished ) {
         return;
     }
 
@@ -326,8 +332,14 @@ function onCellClick( el ) {
     let column = pos.groups.column;
     console.log( 'Selected: row=' + row + ', col=' + column );
 
+    // Skip used cells
+    if ( gameState.field[ row ][ column ] != PlayerMark.BLANK ) {
+        return;
+    }
+
+    el.style.cursor = 'not-allowed'; // visual used cell indicator
     gameState.field[ row ][ column ] = gameState.currentPlayer;
-    gameState.history.push( { 'row':row, 'column':column, 'player':gameState.currentPlaye } );
+    gameState.history.push( { 'row':row, 'column':column, 'player':gameState.currentPlayer } );
 
     if ( gameState.currentPlayer == PlayerMark.X ) {
         el.className = 'player-x';
