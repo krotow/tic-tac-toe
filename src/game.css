@@ -50,12 +50,16 @@ button:hover {
 
 label {
     display: inline-block;
-    width: 200px;
+    width: 220px;
     text-align: end;
 }
 
 input#columns, input#rows {
     width: 5em;
+}
+
+.input-wrapper {
+    margin-bottom: 0.4em;
 }
 
 .title {
@@ -141,6 +145,10 @@ input#columns, input#rows {
 
 #grid > div.player-o {
     color: #0000ff;
+}
+
+#grid > div.win {
+    background-color: #fafad2;
 }
 
 #footer {

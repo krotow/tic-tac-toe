@@ -4,8 +4,7 @@ const DefaultOptions = {
     playerNameX: 'Krustiņš',
     playerNameO: 'Nullīte',
     fieldLimitMin: 2,
-    fieldLimitMax: 20,
-    elapsedTurnTimeout: -1
+    fieldLimitMax: 20
 }
 
 const PlayerMark = {
@@ -103,7 +102,7 @@ function saveSettings() {
     let columns = parseInt( getInputTextById( 'columns' ) );
     if ( isNaN( columns ) ) {
         document.getElementById( 'columns' ).focus();
-        alert( 'Ievadiet kolonnu skaitu kā skaitli.' );
+        alert( 'Kolonnu skaitu norāda kā skaitli.' );
         return;
     }
     if ( ( columns < DefaultOptions.fieldLimitMin ) || ( columns > DefaultOptions.fieldLimitMax ) ) {
@@ -115,7 +114,7 @@ function saveSettings() {
     let rows = parseInt( getInputTextById( 'rows' ) );
     if ( isNaN( rows ) ) {
         document.getElementById( 'rows' ).focus();
-        alert( 'Ievadiet rindu skaitu kā skaitli.' );
+        alert( 'Rindu skaitu norāda kā skaitli.' );
         return;
     }
     if ( ( rows < DefaultOptions.fieldLimitMin ) || ( rows > DefaultOptions.fieldLimitMax ) ) {
@@ -123,7 +122,7 @@ function saveSettings() {
         alert( 'Atļautais rindu skaits ir no ' + DefaultOptions.fieldLimitMin + ' līdz ' + DefaultOptions.fieldLimitMax + '.' );
         return;
     }
-    
+
     let playerX = getInputTextById( 'player-x' );
     if ( playerX == null || playerX == '' ) {
         document.getElementById( 'player-x' ).focus();
@@ -144,29 +143,6 @@ function saveSettings() {
     gameState.playerO.name = playerO;
 
     setGameState( GameState.New );
-}
-
-function setTurnTimeout() {
-    turnStartTime = new Date();
-    startTimer( function() { 
-        currentTime = new Date();
-        let elapsedSecs = ( currentTime - turnStartTime ) / 1000;
-        // on timeout switch to other player turn
-        if ( elapsedSecs == gameState.turnTimeout ) {
-            stopTimer();
-            nextTurn();
-        }
-        getDocElemById( 'elapsed-time' ).textContent = getFormatedTime( elapsedSecs );
-    } );
-}
-
-function setUnlimitedTurnTime() {
-    turnStartTime = new Date();
-    startTimer( function() { 
-        currentTime = new Date();
-        let elapsedSecs = ( currentTime - turnStartTime ) / 1000;
-        getDocElemById( 'elapsed-time' ).textContent = getFormatedTime( elapsedSecs );
-    } );
 }
 
 function setGameInfoMessage( message ) {
@@ -229,7 +205,6 @@ function resetGame() {
         firstPlayer: PlayerMark.X,
         currentPlayer: null,
         field: null,
-        turnTimeout: DefaultOptions.elapsedTurnTimeout,
         history: [],
         round: 0,
         state: null,
@@ -275,11 +250,12 @@ function onBeginGame() {
 }
 
 function onTurn() {
-    if ( gameState.turnTimeout == DefaultOptions.elapsedTurnTimeout ) {
-        setUnlimitedTurnTime();
-    } else {
-        setTurnTimeout();
-    }
+    turnStartTime = new Date();
+    startTimer( function() { 
+        currentTime = new Date();
+        let elapsedSecs = ( currentTime - turnStartTime ) / 1000;
+        getDocElemById( 'elapsed-time' ).textContent = getFormatedTime( elapsedSecs );
+    } );
 
     if ( gameState.currentPlayer == PlayerMark.X ) {
         setGameInfoMessage( 'Spēlētāja ' + gameState.playerX.name + ' gājiens.' );
@@ -421,7 +397,11 @@ function isWinner( playerMark ) {
     for ( let i = 0; i < gameState.fieldRows; i++ ) {
         let result = arrayRow( gameState.field, i ).every( e => e == playerMark );
         if ( result ) {
-            setWinnerState( i, 0, i, gameState.fieldColumns - 1 );
+            let cellPositions = [];
+            for ( let j = 0; j < gameState.fieldColumns; j++ ) {
+                cellPositions.push( { row: i, column: j } );
+            }
+            setWinnerState( cellPositions );
             return true;
         }
     }
@@ -430,6 +410,11 @@ function isWinner( playerMark ) {
     for ( let i = 0; i < gameState.fieldColumns; i++ ) {
         let result = arrayColumn( gameState.field, i ).every( e => e == playerMark );
         if ( result ) {
+            let cellPositions = [];
+            for ( let j = 0; j < gameState.fieldRows; j++ ) {
+                cellPositions.push( { row: j, column: i } );
+            }
+            setWinnerState( cellPositions );
             setWinnerState( 0, i, gameState.fieldRows - 1, i );
             return true;
         }
@@ -444,26 +429,38 @@ function isWinner( playerMark ) {
     // Determine count and direction of validation squares
     let rowSquares = gameState.fieldRows - diagonalLen + 1;         // vertical movement
     let columnSquares = gameState.fieldColumns - diagonalLen + 1;   // horizontal movement
-    // Move "square" window horizontally or vertically. Check square diagonal
-    // win condition by direct or reverse diagonal in each square
+    // According to longest field side slide "square" window over game field
+    // horizontally or vertically. Check square diagonal win condition by
+    // direct or reverse diagonal in each square
     for ( let rPos = 0; rPos < rowSquares; rPos++ ) {
         for ( let cPos = 0; cPos < columnSquares; cPos++ ) {
-            let directDiagonal = Array( diagonalLen );
-            let reverseDiagonal = Array( diagonalLen );
+            let directDiagonal = {
+                diagonalMarks: [],
+                cellPositions: []
+            }
+            let reverseDiagonal = {
+                diagonalMarks: [],
+                cellPositions: []
+            }
             for ( let i = 0; i < diagonalLen; i++ ) {
-                directDiagonal.push( gameState.field[ rPos + i ][ cPos + i ] );
-                reverseDiagonal.push( gameState.field[ rPos + diagonalLen - i - 1][ cPos + i ] );
+                let directRow = rPos + i;
+                let reverseRow = rPos + diagonalLen - i - 1;
+                let column = cPos + i;
+                directDiagonal.diagonalMarks.push( gameState.field[ directRow ][ column ] );
+                directDiagonal.cellPositions.push( { row: directRow, 'column': column } );
+                reverseDiagonal.diagonalMarks.push( gameState.field[ reverseRow ][ column ] );
+                reverseDiagonal.cellPositions.push( { row: reverseRow, 'column': column } );
             }
             // Win by direct diagonal
-            let directDiagonalWin = directDiagonal.every( e => e == playerMark );
+            let directDiagonalWin = directDiagonal.diagonalMarks.every( e => e == playerMark );
             if ( directDiagonalWin ) {
-                setWinnerState( rPos, cPos, rPos + diagonalLen, cPos + diagonalLen );
+                setWinnerState( directDiagonal.cellPositions );
                 return true;
             }
             // Win by reverse diagonal
-            let reverseDiagonalWin = reverseDiagonal.every( e => e == playerMark );
+            let reverseDiagonalWin = reverseDiagonal.diagonalMarks.every( e => e == playerMark );
             if ( reverseDiagonalWin ) {
-                setWinnerState( rPos + diagonalLen - 1, cPos + diagonalLen - 1, rPos + diagonalLen, cPos + diagonalLen );
+                setWinnerState( reverseDiagonal.cellPositions );
                 return true;
             }
         }
@@ -477,16 +474,20 @@ function resetWinnerState() {
     gameState.endState.winPositions = null;
 }
 
-function setWinnerState( startRow, startCol, endRow, endCol ) {
+function setWinnerState( winPositions ) {
     gameState.endState.finishType = FinishType.Win;
-    gameState.endState.winPositions = {
-        start: [ startRow, startCol ],
-        end: [ endRow, endCol ]
-    };
+    gameState.endState.winPositions = winPositions;
 }
 
 function showWin() {
-    //TODO
+    gameState.endState.winPositions.forEach( function( pos ) {
+        let id = 'r' + pos.row + 'c' + pos.column;
+        let classNames = new Set( getDocElemById( id ).className.split( ' ' ) );
+        classNames.add( 'win' );
+        getDocElemById( id ).className = Array.from( classNames ).join( ' ' );
+    } );
+
+    // TODO Explore possibility to draw <div> line over "winning" cells
 }
 
 // Initialize on load
