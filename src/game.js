@@ -103,7 +103,7 @@ function saveSettings() {
     let columns = parseInt( getInputTextById( 'columns' ) );
     if ( isNaN( columns ) ) {
         document.getElementById( 'columns' ).focus();
-        alert( 'Ievadiet kolonnas numuru kā skaitli.' );
+        alert( 'Ievadiet kolonnu skaitu kā skaitli.' );
         return;
     }
     if ( ( columns < DefaultOptions.fieldLimitMin ) || ( columns > DefaultOptions.fieldLimitMax ) ) {
@@ -115,7 +115,7 @@ function saveSettings() {
     let rows = parseInt( getInputTextById( 'rows' ) );
     if ( isNaN( rows ) ) {
         document.getElementById( 'rows' ).focus();
-        alert( 'Ievadiet rindas numuru kā skaitli.' );
+        alert( 'Ievadiet rindu skaitu kā skaitli.' );
         return;
     }
     if ( ( rows < DefaultOptions.fieldLimitMin ) || ( rows > DefaultOptions.fieldLimitMax ) ) {
