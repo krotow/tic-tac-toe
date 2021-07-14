@@ -146,7 +146,7 @@ function saveSettings() {
     setGameState( GameState.New );
 }
 
-function setFixedTurnTime() {
+function setTurnTimeout() {
     turnStartTime = new Date();
     startTimer( function() { 
         currentTime = new Date();
@@ -263,6 +263,8 @@ function onBeginGame() {
     gameState.playerX.wins = 0;
     gameState.playerO.wins = 0;
 
+    //TODO Get turn timeout value
+
     hideDocElemById( 'button-begin' );
     hideDocElemById( 'button-continue' );
     showDocElemById( 'button-new' );
@@ -276,7 +278,7 @@ function onTurn() {
     if ( gameState.turnTimeout == DefaultOptions.elapsedTurnTimeout ) {
         setUnlimitedTurnTime();
     } else {
-        setFixedTurnTime();
+        setTurnTimeout();
     }
 
     if ( gameState.currentPlayer == PlayerMark.X ) {
@@ -302,6 +304,7 @@ function onFinishGame() {
                 setGameInfoMessage( 'Uzvarēja ' + gameState.playerO.name + '.' );
             }
             updateRoundHeader();
+            showWin();
             break;
         case FinishType.Draw:
             setGameInfoMessage( 'Spēle beidzās neizšķirti.' );
@@ -349,10 +352,10 @@ function onCellClick( el ) {
         el.textContent = gameState.playerO.mark;
     }
 
-    if ( !hasAvailableTurns() ) {
-        gameState.endState.finishType = FinishType.Draw;
-    } else if ( isWinner( gameState.currentPlayer ) ) {
+    if ( isWinner( gameState.currentPlayer ) ) {
         gameState.endState.finishType = FinishType.Win;
+    } else if ( !hasAvailableTurns() ) {
+        gameState.endState.finishType = FinishType.Draw;
     }
 
     // Stop here if game is finished
@@ -432,10 +435,40 @@ function isWinner( playerMark ) {
         }
     }
 
+    //
     // Check win diagonally
+    //
 
-    //TODO
-  
+    // Determine valid diagonal length
+    let diagonalLen = Math.min( gameState.fieldRows, gameState.fieldColumns );
+    // Determine count and direction of validation squares
+    let rowSquares = gameState.fieldRows - diagonalLen + 1;         // vertical movement
+    let columnSquares = gameState.fieldColumns - diagonalLen + 1;   // horizontal movement
+    // Move "square" window horizontally or vertically. Check square diagonal
+    // win condition by direct or reverse diagonal in each square
+    for ( let rPos = 0; rPos < rowSquares; rPos++ ) {
+        for ( let cPos = 0; cPos < columnSquares; cPos++ ) {
+            let directDiagonal = Array( diagonalLen );
+            let reverseDiagonal = Array( diagonalLen );
+            for ( let i = 0; i < diagonalLen; i++ ) {
+                directDiagonal.push( gameState.field[ rPos + i ][ cPos + i ] );
+                reverseDiagonal.push( gameState.field[ rPos + diagonalLen - i - 1][ cPos + i ] );
+            }
+            // Win by direct diagonal
+            let directDiagonalWin = directDiagonal.every( e => e == playerMark );
+            if ( directDiagonalWin ) {
+                setWinnerState( rPos, cPos, rPos + diagonalLen, cPos + diagonalLen );
+                return true;
+            }
+            // Win by reverse diagonal
+            let reverseDiagonalWin = reverseDiagonal.every( e => e == playerMark );
+            if ( reverseDiagonalWin ) {
+                setWinnerState( rPos + diagonalLen - 1, cPos + diagonalLen - 1, rPos + diagonalLen, cPos + diagonalLen );
+                return true;
+            }
+        }
+    }
+
     return false;
 }
 
@@ -450,6 +483,10 @@ function setWinnerState( startRow, startCol, endRow, endCol ) {
         start: [ startRow, startCol ],
         end: [ endRow, endCol ]
     };
+}
+
+function showWin() {
+    //TODO
 }
 
 // Initialize on load
