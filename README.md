@@ -48,7 +48,7 @@ spēlētāju, kurš veiks pirmo gājienu.
 
 Spēlētāji pēc kārtas veic gājienus, iezīmējot neaizpildītās spēles laukuma 
 rūtiņas. Spēle beidzas, kad kāds no spēlētājiem vienā līnijā aizpildījis 
-uzvaras virknes garumam atbilstošo skaitu rūtiņu;. Vai arī visas lauka 
+uzvaras virknes garumam atbilstošo skaitu rūtiņu. Vai arī visas lauka 
 rūtiņas aizpildītas, taču neviens nav uzvarējis.
 
 Notīrīt spēles lauku un turpināt spēli var, spiežot pogu "Turpināt". Turpinot 
