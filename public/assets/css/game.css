@@ -136,7 +136,7 @@ input.error {
   
 .label1 { grid-area: label1; }
 .input1 { grid-area: input1; }
-.text1 { grid-area: text1; }
+.text1 { grid-area: text1; text-align: center; }
 .input2 { grid-area: input2; }
 .label2 { grid-area: label2; }
 .input3 { grid-area: input3; }
