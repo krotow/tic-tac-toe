@@ -583,8 +583,10 @@ function showWin() {
     } );
 }
 
+// Set up DOM events
+
 // Initialize on load
-window.addEventListener( 'load', resetGame );
+document.addEventListener( 'load', resetGame );
 
 document.getElementById( 'button-reset' ).addEventListener( 'click', function() {
     resetGame();
