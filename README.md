@@ -64,7 +64,7 @@ Spēles demonstrācijas adrese: http://tic-tac-toe-1gk.pages.dev/
 # Izstrādātājiem
 
 Spēle veidota kā vienas lapas [Node.js](https://nodejs.org/en/) Web aplikācija,
-izmantojot tikai HTML, CSS un JavaScript. Automātiskās uzstādīšanas nodrošināšai
+izmantojot tikai HTML, CSS un JavaScript. Automātiskās uzstādīšanas nodrošināšanai
 [Cloudfare Pages](https://pages.cloudflare.com/) aplikācijai pievienots rudimentārs
 [Next.js](https://nextjs.org/) atbalsts.
 
