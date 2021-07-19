@@ -397,9 +397,9 @@ function onCellClick( el ) {
 
 function updateRoundHeader() {
     getDocElemById( 'round-number' ).textContent = gameState.round;
-    getDocElemById( 'player-name-x' ).textContent = gameState.playerX.name + ':';
+    getDocElemById( 'player-name-x' ).textContent = gameState.playerX.name;
     getDocElemById( 'player-x-wins' ).textContent = gameState.playerX.wins;
-    getDocElemById( 'player-name-o' ).textContent = gameState.playerO.name + ':';
+    getDocElemById( 'player-name-o' ).textContent = gameState.playerO.name;
     getDocElemById( 'player-o-wins' ).textContent = gameState.playerO.wins;
 }
 
