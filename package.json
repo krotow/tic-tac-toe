@@ -9,8 +9,7 @@
     "start": "next start",
     "export": "next export",
     "prod_start": "NODE_ENV=production node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint public/**/*.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -28,9 +27,5 @@
     "next": "^11.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
-  },
-  "devDependencies": {
-    "eslint": "^7.31.0",
-    "eslint-config-next": "^11.0.1"
   }
 }
