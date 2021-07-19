@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Krustiņi un nullītes</title>
+    <link rel="icon" href="/assets/images/favicon.png">
+    <link rel="stylesheet" href="/assets/css/game.css">
+</head>
+<body>
+    <header>
+        <h1>Krustiņi un nullītes</h1>
+    </header>
+    <section id="game-options">
+        <div class="form-container">
+            <h2>Spēles nosacījumi</h2>
+            <div class="options">
+                <div class="label1">
+                    <label for="columns">Laukums (kolonnas x rindas):</label>
+                </div>
+                <div class="input1">
+                    <input type="number" id="columns" name="columns">
+                </div>
+                <div class="text1">
+                    <span>x</span>
+                </div>
+                <div class="input2">
+                    <input type="number" id="rows" name="rows">
+                </div>
+                <div class="label2">
+                    <label for="win-length">Uzvaras virknes garums:</label>
+                </div>
+                <div class="input3">
+                    <input type="number" id="win-length" name="win-length">
+                </div>
+                <div class="label3">
+                    <label for="player-x">Spēlētājs X:</label>
+                </div>
+                <div class="input4">
+                    <input type="text" id="player-x" name="player-x">
+                </div>
+                <div class="label4">
+                    <label for="player-o">Spēlētājs O:</label>
+                </div>
+                <div class="input5">
+                    <input type="text" id="player-o" name="player-o">
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="game-first-player">
+        <div class="form-container">
+            <h2>Spēli sāk</h2>
+            <div class="button-bar">
+                <button type="button" id="button-first-x">X</button>
+                <button type="button" id="button-first-o">O</button>
+            </div>
+        </div>
+    </section>
+    <section id="game-field">
+        <div class="game-container">
+            <div class="game-topleft">
+                <div>Raunds:&nbsp;<span id="round-number">0</span></div>
+            </div>
+            <div class="game-topright">
+                <div id="elapsed-time">00:00</div>
+            </div>
+            <div class="grid-wrapper">
+                <div id="grid">
+                    <div id="r1c1">1</div>
+                    <div id="r1c2">2</div>
+                    <div id="r1c3">3</div>
+                    <div id="r2c1">4</div>
+                    <div id="r2c2">5</div>
+                    <div id="r2c3">6</div>
+                    <div id="r3c1">7</div>
+                    <div id="r3c2">8</div>
+                    <div id="r3c3">9</div>
+                    <div id="r3c3">10</div>
+                    <div id="r3c3">11</div>
+                    <div id="r3c3">12</div>
+                    <div id="r3c3">13</div>
+                    <div id="r3c3">14</div>
+                    <div id="r3c3">15</div>
+                    <div id="r3c3">16</div>
+                    <div id="r3c3">17</div>
+                    <div id="r3c3">18</div>
+                    <div id="r3c3">19</div>
+                    <div id="r3c3">20</div>
+                    <div id="r3c3">21</div>
+                    <div id="r3c3">22</div>
+                    <div id="r3c3">23</div>
+                    <div id="r3c3">24</div>
+                    <div id="r3c3">25</div>
+                </div>
+            </div>
+            <div class="stats-x">
+                <span id="player-name-x">Spēlētājs X</span>
+                :&nbsp;
+                <span id="player-x-wins">0</span>
+            </div>
+            <div class="stats-o">
+                <span id="player-name-o">Spēlētājs O</span>
+                :&nbsp;
+                <span id="player-o-wins">0</span>
+            </div>
+            <div id="info" class="info">Paziņojumu josla.</div>
+        </div>
+    </section>
+    <footer>
+        <div class="button-bar">
+            <button type="button" id="button-reset">Atiestatīt</button>
+            <button type="button" id="button-begin">Sākt spēli</button>
+            <button type="button" id="button-continue">Turpināt</button>
+            <button type="button" id="button-new">Jauna spēle</button>
+        </div>
+    </footer>
+</body>
+<script src="/assets/js/game.js"></script>
+<!--
+<script>
+    window.addEventListener( 'load', function() {
+        document.getElementById( 'game-options' ).style.display = 'none';
+        document.getElementById( 'game-first-player' ).style.display = 'none';
+        //document.getElementById( 'game-field' ).style.display = 'none';
+    } );
+</script>
+-->
+</html>

@@ -4,7 +4,7 @@ const DefaultOptions = {
     playerNameX: 'Krustiņš',
     playerNameO: 'Nullīte',
     fieldLimitMin: 2,
-    fieldLimitMax: 20
+    fieldLimitMax: 10
 }
 
 const PlayerMark = {
@@ -94,59 +94,105 @@ function removeAllChildNodes( parent ) {
     }
 }
 
+function setElemClass( elem, className ) {
+    let classNames = new Set( elem.className.split( ' ' ) );
+    if ( !classNames.has( className ) ) {
+        classNames.add( className );
+        elem.className = Array.from( classNames ).join( ' ' ).trim();
+    }
+}
+
+function removeElemClass( elem, className ) {
+    let classNames = new Set( elem.className.split( ' ' ) );
+    if ( classNames.has( className ) ) {
+        classNames.delete( className );
+        elem.className = Array.from( classNames ).join( ' ' ).trim();
+    }
+}
+
+function clearInputErrors() {
+    const inputIds = [ 'columns', 'rows', 'win-length', 'player-x', 'player-o' ];
+    inputIds.forEach( function( id ) {
+        let elem = getDocElemById( id );
+        removeElemClass( elem, 'error' );
+    } );
+}
+
+function setInputErrorById( id ) {
+    let input = getDocElemById( id );
+    setElemClass( input, 'error' );
+    input.focus();
+}
+
 function getGrid() {
     return getDocElemById( 'grid' );
 }
 
-function saveSettings() {
+function validateInput() {
+    clearInputErrors();
+
     let columns = parseInt( getInputTextById( 'columns' ) );
     if ( isNaN( columns ) ) {
-        document.getElementById( 'columns' ).focus();
+        setInputErrorById( 'columns' );
         alert( 'Kolonnu skaitu norāda kā skaitli.' );
-        return;
+        return false;
     }
     if ( ( columns < DefaultOptions.fieldLimitMin ) || ( columns > DefaultOptions.fieldLimitMax ) ) {
-        document.getElementById( 'columns' ).focus();
-        alert( 'Atļautais kolonu skaits ir no ' + DefaultOptions.fieldLimitMin + ' līdz ' + DefaultOptions.fieldLimitMax + '.' );
-        return;
+        setInputErrorById( 'columns' );
+        alert( 'Atļautais kolonu skaits - no ' + DefaultOptions.fieldLimitMin + ' līdz ' + DefaultOptions.fieldLimitMax + '.' );
+        return false;
     }
 
     let rows = parseInt( getInputTextById( 'rows' ) );
     if ( isNaN( rows ) ) {
-        document.getElementById( 'rows' ).focus();
+        setInputErrorById( 'rows' );
         alert( 'Rindu skaitu norāda kā skaitli.' );
-        return;
+        return false;
     }
     if ( ( rows < DefaultOptions.fieldLimitMin ) || ( rows > DefaultOptions.fieldLimitMax ) ) {
-        document.getElementById( 'rows' ).focus();
-        alert( 'Atļautais rindu skaits ir no ' + DefaultOptions.fieldLimitMin + ' līdz ' + DefaultOptions.fieldLimitMax + '.' );
-        return;
+        setInputErrorById( 'rows' );
+        alert( 'Atļautais rindu skaits - no ' + DefaultOptions.fieldLimitMin + ' līdz ' + DefaultOptions.fieldLimitMax + '.' );
+        return false;
+    }
+
+    let winLength = parseInt( getInputTextById( 'win-length' ) );
+    if ( isNaN( winLength ) ) {
+        setInputErrorById( 'win-length' );
+        alert( 'Uzvaras virknes garumu norāda kā skaitli.' );
+        return false;
+    }
+    let diagonalLength = Math.min( columns, rows );
+    if ( ( winLength < 2 ) || ( winLength > diagonalLength ) ) {
+        setInputErrorById( 'win-length' );
+        alert( 'Iespējamais uzvaras virknes garums - no 2 līdz ' + diagonalLength + '.' );
+        return false;
     }
 
     let playerX = getInputTextById( 'player-x' );
     if ( playerX == null || playerX == '' ) {
-        document.getElementById( 'player-x' ).focus();
+        setInputErrorById( 'player-x' );
         alert( 'Ievadiet spēlētāja X vārdu.' );
-        return;
+        return false;
     }
 
     let playerO = getInputTextById( 'player-o' );
     if ( playerO == null || playerO == '' ) {
-        document.getElementById( 'player-o' ).focus();
+        setInputErrorById( 'player-o' );
         alert( 'Ievadiet spēlētāja O vārdu.' );
-        return;
+        return false;
     }
 
     gameState.fieldColumns = columns;
     gameState.fieldRows = rows;
+    gameState.requiredWinLength = winLength;
     gameState.playerX.name = playerX;
     gameState.playerO.name = playerO;
 
-    setGameState( GameState.New );
+    return true;
 }
 
 function setGameInfoMessage( message ) {
-    getDocElemById( 'game-info' ).textContent = message;
+    getDocElemById( 'info' ).textContent = message;
 }
 
 function drawGameField() {
@@ -163,7 +209,7 @@ function drawGameField() {
             el.textContent = ( ( r * gameState.fieldColumns ) + c + 1 ).toString();
             grid.appendChild( el );
 
-            el.addEventListener( 'click', function( e ) {
+            el.addEventListener( 'click', function() {
                 onCellClick( this );
             } );
         }
@@ -192,6 +238,7 @@ function resetGame() {
     gameState = {
         fieldColumns: DefaultOptions.fieldColumns,
         fieldRows: DefaultOptions.fieldRows,
+        requiredWinLength: Math.min( DefaultOptions.fieldColumns, DefaultOptions.fieldRows ),
         playerX: {
             name: DefaultOptions.playerNameX,
             mark: PlayerMark.X,
@@ -217,13 +264,16 @@ function resetGame() {
 }
 
 function onNewGame() {
+    showDocElemById( 'button-reset' );
     showDocElemById( 'button-begin' );
     hideDocElemById( 'button-continue' );
     hideDocElemById( 'button-new' );
     hideDocElemById( 'game-first-player' );
     hideDocElemById( 'game-field' );
+    showDocElemById( 'game-options' );
     setInputTextById( 'columns', gameState.fieldColumns );
     setInputTextById( 'rows', gameState.fieldRows );
+    setInputTextById( 'win-length', gameState.requiredWinLength );
     setInputTextById( 'player-x', gameState.playerX.name );
     setInputTextById( 'player-o', gameState.playerO.name );
 }
@@ -231,6 +281,7 @@ function onNewGame() {
 function onBeginGame() {
     gameState.fieldColumns = parseInt( getInputTextById( 'columns' ) );
     gameState.fieldRows = parseInt( getInputTextById( 'rows' ) );
+    gameState.requiredWinLength = parseInt( getInputTextById( 'win-length' ) );
     gameState.playerX.name = getInputTextById( 'player-x' );
     gameState.playerO.name = getInputTextById( 'player-o' );
     gameState.currentPlayer = null;
@@ -238,11 +289,12 @@ function onBeginGame() {
     gameState.playerX.wins = 0;
     gameState.playerO.wins = 0;
 
-    //TODO Get turn timeout value
-
+    hideDocElemById( 'button-reset' );
     hideDocElemById( 'button-begin' );
     hideDocElemById( 'button-continue' );
     showDocElemById( 'button-new' );
+
+    hideDocElemById( 'game-options' );
 
     getDocElemById( 'button-first-x' ).textContent = gameState.playerX.name + ' (X)'
     getDocElemById( 'button-first-o' ).textContent = gameState.playerO.name + ' (O)'
@@ -252,7 +304,7 @@ function onBeginGame() {
 function onTurn() {
     turnStartTime = new Date();
     startTimer( function() { 
-        currentTime = new Date();
+        let currentTime = new Date();
         let elapsedSecs = ( currentTime - turnStartTime ) / 1000;
         getDocElemById( 'elapsed-time' ).textContent = getFormatedTime( elapsedSecs );
     } );
@@ -283,7 +335,7 @@ function onFinishGame() {
             showWin();
             break;
         case FinishType.Draw:
-            setGameInfoMessage( 'Spēle beidzās neizšķirti.' );
+            setGameInfoMessage( 'Raunds beidzās neizšķirti.' );
             break;
     }
 
@@ -395,12 +447,21 @@ function isWinner( playerMark ) {
 
     // Check win by row
     for ( let i = 0; i < gameState.fieldRows; i++ ) {
-        let result = arrayRow( gameState.field, i ).every( e => e == playerMark );
-        if ( result ) {
-            let cellPositions = [];
-            for ( let j = 0; j < gameState.fieldColumns; j++ ) {
+        const cells = arrayRow( gameState.field, i );
+        let cellPositions = [];
+        for ( let j = 0; j < gameState.fieldColumns; j++ ) {
+            if ( cells[ j ] == playerMark ) {
                 cellPositions.push( { row: i, column: j } );
+            } else {
+                // Winning length reached before other gamer mark
+                if ( cellPositions.length >= gameState.requiredWinLength ) {
+                    setWinnerState( cellPositions );
+                    return true;
+                }
+                cellPositions.length = 0;
             }
+        }
+        if ( cellPositions.length >= gameState.requiredWinLength ) {
             setWinnerState( cellPositions );
             return true;
         }
@@ -408,14 +469,22 @@ function isWinner( playerMark ) {
 
     // Check win by column
     for ( let i = 0; i < gameState.fieldColumns; i++ ) {
-        let result = arrayColumn( gameState.field, i ).every( e => e == playerMark );
-        if ( result ) {
-            let cellPositions = [];
-            for ( let j = 0; j < gameState.fieldRows; j++ ) {
+        const cells = arrayColumn( gameState.field, i );
+        let cellPositions = [];
+        for ( let j = 0; j < gameState.fieldRows; j++ ) {
+            if ( cells[ j ] == playerMark ) {
                 cellPositions.push( { row: j, column: i } );
+            } else {
+                // Winning length reached before other gamer mark
+                if ( cellPositions.length >= gameState.requiredWinLength ) {
+                    setWinnerState( cellPositions );
+                    return true;
+                }
+                cellPositions.length = 0;
             }
+        }
+        if ( cellPositions.length >= gameState.requiredWinLength ) {
             setWinnerState( cellPositions );
-            setWinnerState( 0, i, gameState.fieldRows - 1, i );
             return true;
         }
     }
@@ -424,43 +493,69 @@ function isWinner( playerMark ) {
     // Check win diagonally
     //
 
-    // Determine valid diagonal length
-    let diagonalLen = Math.min( gameState.fieldRows, gameState.fieldColumns );
     // Determine count and direction of validation squares
-    let rowSquares = gameState.fieldRows - diagonalLen + 1;         // vertical movement
-    let columnSquares = gameState.fieldColumns - diagonalLen + 1;   // horizontal movement
+    const rowSquares = gameState.fieldRows - gameState.requiredWinLength + 1;       // vertical movement
+    const columnSquares = gameState.fieldColumns - gameState.requiredWinLength + 1; // horizontal movement
     // According to longest field side slide "square" window over game field
     // horizontally or vertically. Check square diagonal win condition by
     // direct or reverse diagonal in each square
     for ( let rPos = 0; rPos < rowSquares; rPos++ ) {
         for ( let cPos = 0; cPos < columnSquares; cPos++ ) {
             let directDiagonal = {
-                diagonalMarks: [],
-                cellPositions: []
+                cells: [],
+                positions: []
             }
             let reverseDiagonal = {
-                diagonalMarks: [],
-                cellPositions: []
+                cells: [],
+                positions: []
             }
-            for ( let i = 0; i < diagonalLen; i++ ) {
+            for ( let i = 0; i < gameState.requiredWinLength; i++ ) {
                 let directRow = rPos + i;
-                let reverseRow = rPos + diagonalLen - i - 1;
+                let reverseRow = rPos + gameState.requiredWinLength - i - 1;
                 let column = cPos + i;
-                directDiagonal.diagonalMarks.push( gameState.field[ directRow ][ column ] );
-                directDiagonal.cellPositions.push( { row: directRow, 'column': column } );
-                reverseDiagonal.diagonalMarks.push( gameState.field[ reverseRow ][ column ] );
-                reverseDiagonal.cellPositions.push( { row: reverseRow, 'column': column } );
+                directDiagonal.cells.push( gameState.field[ directRow ][ column ] );
+                directDiagonal.positions.push( { row: directRow, 'column': column } );
+                reverseDiagonal.cells.push( gameState.field[ reverseRow ][ column ] );
+                reverseDiagonal.positions.push( { row: reverseRow, 'column': column } );
             }
             // Win by direct diagonal
-            let directDiagonalWin = directDiagonal.diagonalMarks.every( e => e == playerMark );
-            if ( directDiagonalWin ) {
-                setWinnerState( directDiagonal.cellPositions );
+            let cellPositions = [];
+
+            for ( let i = 0; i < directDiagonal.cells.length; i++ ) {
+                if ( directDiagonal.cells[ i ] == playerMark ) {
+                    let pos = directDiagonal.positions[ i ];
+                    cellPositions.push( { row: pos.row, column: pos.column } );
+                } else {
+                    // Winning length reached before other gamer mark
+                    if ( cellPositions.length >= gameState.requiredWinLength ) {
+                        setWinnerState( cellPositions );
+                        return true;
+                    }
+                    cellPositions.length = 0;
+                }
+            }
+            if ( cellPositions.length >= gameState.requiredWinLength ) {
+                setWinnerState( cellPositions );
                 return true;
             }
-            // Win by reverse diagonal
-            let reverseDiagonalWin = reverseDiagonal.diagonalMarks.every( e => e == playerMark );
-            if ( reverseDiagonalWin ) {
-                setWinnerState( reverseDiagonal.cellPositions );
+
+            cellPositions.length = 0;
+
+            for ( let i = 0; i < reverseDiagonal.cells.length; i++ ) {
+                if ( reverseDiagonal.cells[ i ] == playerMark ) {
+                    let pos = reverseDiagonal.positions[ i ];
+                    cellPositions.push( { row: pos.row, column: pos.column } );
+                } else {
+                    // Winning length reached before other gamer mark
+                    if ( cellPositions.length >= gameState.requiredWinLength ) {
+                        setWinnerState( cellPositions );
+                        return true;
+                    }
+                    cellPositions.length = 0;
+                }
+            }
+            if ( cellPositions.length >= gameState.requiredWinLength ) {
+                setWinnerState( cellPositions );
                 return true;
             }
         }
@@ -480,14 +575,12 @@ function setWinnerState( winPositions ) {
 }
 
 function showWin() {
-    gameState.endState.winPositions.forEach( function( pos ) {
-        let id = 'r' + pos.row + 'c' + pos.column;
-        let classNames = new Set( getDocElemById( id ).className.split( ' ' ) );
-        classNames.add( 'win' );
-        getDocElemById( id ).className = Array.from( classNames ).join( ' ' );
-    } );
+    const getCellElem = ( row, column ) => getDocElemById( 'r' + row + 'c' + column );
 
-    // TODO Explore possibility to draw <div> line over "winning" cells
+    gameState.endState.winPositions.forEach( function( pos ) {
+        let cell = getCellElem( pos.row, pos.column );
+        setElemClass( cell, 'win' );
+    } );
 }
 
 // Initialize on load
@@ -497,20 +590,18 @@ document.getElementById( 'button-reset' ).addEventListener( 'click', function() 
     resetGame();
 } );
 
-document.getElementById( 'button-save-settings' ).addEventListener( 'click', function() {
-    saveSettings();
-} );
-
-document.getElementById( 'button-new' ).addEventListener( 'click', function() {
-    setGameState( GameState.New );
-} );
-
 document.getElementById( 'button-begin' ).addEventListener( 'click', function() {
-    setGameState( GameState.Begin );
+    if ( validateInput() ) {
+        setGameState( GameState.Begin );
+    }
 } );
 
 document.getElementById( 'button-continue' ).addEventListener( 'click', function() {
     newRound();
+} );
+
+document.getElementById( 'button-new' ).addEventListener( 'click', function() {
+    setGameState( GameState.New );
 } );
 
 document.getElementById( 'button-first-x' ).addEventListener( 'click', function() {

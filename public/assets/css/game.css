@@ -1,0 +1,257 @@
+@import url("https://fonts.googleapis.com/css?family=Dosis");
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;700&display=swap');
+
+*, *:before, *:after {
+    box-sizing: border-box;
+}
+
+html {
+    font-family: "Roboto", sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+html, body, section {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-flow: column;
+    background: linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(253,187,45,1) 100%);
+}
+
+section {
+    flex: 1 1 0%;
+    overflow: auto;
+}
+
+section, footer {
+    border-top: 1px solid #555555;
+}
+
+header {
+    padding: 1em;
+}
+
+header, footer {
+    background-color: #ffffff;
+}
+
+h1, h2 {
+    font-family: "Dosis", cursive;
+    font-weight: 700;
+    text-align: center;
+    margin: 0;
+}
+
+h1 {
+    font-size: 2rem;
+}
+
+h2 {
+    font-size: 1.25rem;
+    padding: 1rem;
+    background-color: #00004e;
+    color: #ffffff;
+}
+
+button {
+    display: inline-block;
+    background-color: #ffffff;
+    color: #000000;
+    border: 2px solid #555555;
+    border-radius: 4px;
+    padding: 1rem 2rem;
+    text-align: center;
+    text-decoration: none;
+    font-family: inherit;
+    font-weight: inherit;
+    font-size: 1rem;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #555555;
+    color: #ffffff;
+}
+
+.button-bar {
+    padding: 1rem 1rem 1rem 1rem;
+    text-align: center;
+}
+
+label, footer > .button-bar {
+    text-align: end;
+}
+
+input[type="text"], input[type="number"] {
+    font-size: 16px;
+    font-size: max(16px, 1em);
+    font-family: inherit;
+    font-weight: inherit;
+    padding: 0.25em 0.5em;
+    background-color: #ffffff;
+    border: 2px solid #8b8a8b;
+    border-radius: 4px;
+}
+
+label, input[type="text"], input[type="number"] {
+    width: 100%;
+}
+
+input.error {
+    border: 2px solid red;
+}
+
+.form-container {
+    margin: 20% auto 0 auto;
+    width: fit-content;
+    width: -moz-fit-content;
+    background-color: #fff7e7;
+    border-radius: 4px;
+    box-shadow: 4px 4px 4px #000000;
+}
+
+.form-container > h2 {
+    border-radius: 4px 4px 0 0;
+}
+
+.options {
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: 240px 80px 30px 80px;
+    grid-template-rows: repeat(4, 1fr);
+    grid-gap: 8px;
+    grid-auto-flow: row;
+    grid-template-areas:
+        "label1 input1 text1 input2"
+        "label2 input3 . ."
+        "label3 input4 input4 input4"
+        "label4 input5 input5 input5";
+}
+  
+.label1 { grid-area: label1; }
+.input1 { grid-area: input1; }
+.text1 { grid-area: text1; }
+.input2 { grid-area: input2; }
+.label2 { grid-area: label2; }
+.input3 { grid-area: input3; }
+.label3 { grid-area: label3; }
+.input4 { grid-area: input4; }
+.label4 { grid-area: label4; }
+.input5 { grid-area: input5; }
+
+.label1, .label2, .label3, .label4 {
+    text-align: end;
+}
+
+.label1, .label2, .label3, .label4, .text1 {
+    line-height: 2rem;
+}
+
+#game-first-player > .form-container > .button-bar {
+    padding: 2rem;
+}
+
+.game-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto 1fr auto auto;
+    grid-gap: 1.5rem;
+    grid-auto-flow: row;
+    grid-template-areas:
+      "game-topleft . game-topright"
+      "grid-wrapper grid-wrapper grid-wrapper"
+      "stats-x . stats-o"
+      "info info info";
+    width: fit-content;
+    width: -moz-fit-content;
+    height: 100%;
+    padding: 2rem;
+    margin: auto;
+}
+  
+.game-topleft { grid-area: game-topleft; }
+.game-topright { grid-area: game-topright; text-align: end; }
+.stats-x { grid-area: stats-x; }
+.stats-o { grid-area: stats-o; justify-content: flex-end; }
+.info { grid-area: info; }
+
+.grid-wrapper {
+    grid-area: grid-wrapper;
+    margin: auto;
+}
+
+.game-box, .info {
+    text-align: center;
+}
+
+.game-topleft > div { margin-right: 0; }
+.game-topright > div { margin-left: 0; }
+
+#grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    grid-auto-columns: 1fr;
+    grid-auto-rows: 1fr;
+    grid-gap: 0.5rem;
+    grid-auto-flow: row;
+    justify-content: center;
+    width: fit-content;
+    width: -moz-fit-content;
+}
+
+#grid > div {
+    display: inline;
+    width: 3rem;
+    height: 3rem;
+    text-align: center;
+    font-family: "Dosis", cursive;
+    font-weight: 700;
+    font-size: 1.5rem;
+    line-height: 2.6rem;
+    color: #c8c8c8;
+    cursor: pointer;
+}
+
+.stats-x, .stats-o {
+    display: flex;
+    width: fit-content;
+    width: -moz-fit-content;
+}
+
+.stats-o {
+    margin-left: auto;
+}
+
+.game-topleft > div, .game-topright > div,
+.stats-x, .stats-o, .info {
+    padding: 1rem;
+}
+
+.game-topleft > div, .game-topright > div,
+.stats-x, .stats-o, .info,
+#grid > div {
+    background-color: #ffffff;
+    border: 2px solid #000000;
+    border-radius: 4px;
+    box-shadow: 2px 2px 2px #000000;
+}
+
+#grid > div.player-x {
+    color: #ff0000;
+}
+
+#grid > div.player-o {
+    color: #0000ff;
+}
+
+#grid > div.win {
+    color: #ffffff;
+    background-color: #008000;
+}
