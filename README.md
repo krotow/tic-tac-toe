@@ -1,74 +1,74 @@
-# Krustiņi un nullītes
+# Tic-Tac-Toe)
 
-> This readme in [Latvian language](https://en.wikipedia.org/wiki/Latvian_language) describe custom made Tic-Tac-Toe game.
+> Game UI is implemented in [Latvian language](https://en.wikipedia.org/wiki/Latvian_language).
 
-Šī tiešsaistes programma īsteno modificētu populāras galda spēles "Krustiņi
-un nullītes" (angļu: Tic-Tac-Toe) algoritmu spēlēšanai diviem fiziskajiem
-spēlētājiem Interneta pārlūkprogrammā.
+This web application implements a modified popular game "Tic-Tac-Toe" 
+algorithm for playing by two human players in a web browser.
 
-Atšķirībā no oriģinālās "Krustiņi un nullītes" spēles, ko spēlē kvadrāta
-formas laukumā un uzvarai vienam spēlētājam jāaizpilda visa rinda, kolonna
-vai kāda no kvadrāta diagonālēm, šīs spēles modifikācija pieļauj spēlēšanu
-iepriekš uzdota izmēra taisnstūra formas laukumā un izvēlēties dažāda garuma
-uzvaras virkni.
+Unlike the original "Tic-Tac-Toe" game, played in a square field and where
+winning player must fill the entire row, column or one of the diagonals, this
+game modification allows to play on rectangular square field and have different
+marked cell number for a win.
 
-# Spēles noteikumi
+# Game rules
 
-1.  Spēles laukums ir no 2x2 līdz 10x10 rūtiņām.
+1.  The game field size is 2x2 to 10x10 cells.
 
-2.  Spēlētāji pēc kārtas lauka brīvajās rūtiņās izvieto pa vienai savai zīmei
-    (krustiņu vai nullīti).
+2.  Players take turns by placing their marks in the free squares of the field
+    (cross or zero).
 
-3.  Gājienu izlaist nav iespējams.
+3.  It is not possible to skip the turn.
 
-4.  Spēlē uzvar spēlētājs, kurš vienā līnijā - rindā, kolonnā vai diagonāli -
-    pēc kārtas izvietojis iepriekš uzstādīto skaitu savu zīmju.
+4.  The winner of the game is the player who filled a single line - row, column
+    or diagonal - with his marks.
 
-5.  Spēles rezultāts ir neizšķirts, ja spēles laukā nav palikusi neviena
-    brīva rūtiņa un spēlē neviens nav uzvarējis.
+5.  The result of the game is a draw if there is no free cell left on the field
+    and no one has won.
 
-# Spēles gaita
+# Game progress
 
-Sākot jaunu spēli, norāda spēles nosacījumus:
+When starting a new game, set the game conditions:
 
-*   Spēles laukuma izmēru "Laukums" lauciņos. No 2 līdz 10 rūtiņām.
-*   Uzvaras virknes garumu. Mazākais - 2 rūtiņas. Lielākais - mazākais kolonnas
-    vai rindas rūtiņu skaits no "Laukums" lauciņiem.
-*   Spēlētāja vārdu, kurš spēlēs ar krustiņa zīmi lauciņā "Spēlētājs X".
-*   Spēlētāja vārdu, kurš spēlēs ar nullītes zīmi lauciņā "Spēlētājs O".
+*   The game field size in the "Laukums" fields. From 2 to 10 cells.
+*   Number of cell required for a win in "Uzvaras virknes garums" field. The
+    shortest - 2 cells. Tallest - smallest column number or the number of row
+    cells from the "Laukums" fields.
+*   The name of the player who will play with the cross in the "Spēlētājs X"
+    field.
+*   The name of the player who will play with a zero in the "Spēlētājs O"
+    field.
 
-Noklusējuma spēles lauka garums, platums un uzvaras virknes garums - 
-3 rūtiņas.
+Default game field length, width, and winning string length - 3 cells.
 
-Norādītos spēles nosacījumus var atgriezt uz noklusētajiem, spiežot pogu 
-"Atiestatīt".
+The specified game conditions can be reset to the defaults by pressing the
+"Atiestatīt" button.
 
-Jaunu spēli uzsāk, spiežot pogu "Sākt spēli". "Spēli sāk" rāmī izvēlas 
-spēlētāju, kurš veiks pirmo gājienu.
+Start a new game by clicking the "Sākt spēli" button. In the "Spēli sāk" frame
+select the player who makes the first move.
 
-Spēlētāji pēc kārtas veic gājienus, iezīmējot neaizpildītās spēles laukuma 
-rūtiņas. Spēle beidzas, kad kāds no spēlētājiem vienā līnijā aizpildījis 
-uzvaras virknes garumam atbilstošo skaitu rūtiņu. Vai arī visas lauka 
-rūtiņas aizpildītas, taču neviens nav uzvarējis.
+Players make turns by clicking in the empty game field cells. The game ends
+when one of the players on the same line fill the number of cells with his 
+mark, matching with a required cells number for a win. Or no free cells are
+remain in a field.
 
-Notīrīt spēles lauku un turpināt spēli var, spiežot pogu "Turpināt". Turpinot 
-spēli pirmais sāk tas spēlētājs, kurš iepriekšējā reizē sāka otrais.
+It is possible to continue game with a new round on a clear field by pressing
+the "Turpināt" button. The first player in a new game round is the player who
+started the second at last time.
 
-Spēles pārtraukšanai un jaunas spēles nosacījumu uzstādīšanai spiest pogu 
-"Jauna spēle".
+To stop the game and set new game conditions, press the button "Jauna spēle".
 
 # Demo
 
-Spēles demonstrācijas adrese: http://tic-tac-toe-1gk.pages.dev/
+Online demo address: http://tic-tac-toe-1gk.pages.dev/
 
-# Izstrādātājiem
+# For developers
 
-Spēle veidota kā vienas lapas [Node.js](https://nodejs.org/en/) Web aplikācija,
-izmantojot tikai HTML, CSS un JavaScript. Automātiskās uzstādīšanas nodrošināšanai
-[Cloudfare Pages](https://pages.cloudflare.com/) aplikācijai pievienots rudimentārs
-[Next.js](https://nextjs.org/) atbalsts.
+The game is designed as a single page [Node.js] (https://nodejs.org/en/) Web
+application, using only HTML, CSS and JavaScript. To ensure automatic
+deplayment into [Cloudfare Pages] (https://pages.cloudflare.com/), it have
+rudimentary added to application [Next.js] (https://nextjs.org/) support.
 
-Lokālai demonstrācijai spēle jāielādē un jāuzstāda no Github repozitorija
+For local demo, the game must be downloaded and installed from the Github repository
 
 ```
 git clone https://github.com/krotow/tic-tac-toe.git
@@ -76,13 +76,13 @@ cd tic-tac-toe
 npm install
 ```
 
-un jāstartē izstrādes režīmā.
+and launched in development mode.
 
 ```
 npm run dev
 ```
 
-Pēc tam spēles demonstrāciju var atvērt pārlūkprogrammā. Lokālā adrese: http://localhost:3000/
+Then you can open a demo of the game in your browser. Local address: http://localhost:3000/
 
 ---
-&copy; 2021, Jānis Baumanis, [ISC](https://choosealicense.com/licenses/isc/)
+& copy; 2021, Janis Baumanis, [ISC] (https://choosealicense.com/licenses/isc/)
