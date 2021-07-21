@@ -85,4 +85,4 @@ npm run dev
 Then you can open a demo of the game in your browser. Local address: http://localhost:3000/
 
 ---
-& copy; 2021, Janis Baumanis, [ISC] (https://choosealicense.com/licenses/isc/)
+&copy; 2021, Janis Baumanis, [ISC] (https://choosealicense.com/licenses/isc/)
