@@ -359,8 +359,8 @@ function onCellClick( el ) {
         return;
     }
 
-    let row = pos.groups.row;
-    let column = pos.groups.column;
+    let row = parseInt( pos.groups.row );
+    let column = parseInt( pos.groups.column );
     console.log( 'Selected: row=' + row + ', col=' + column );
 
     // Skip used cells
@@ -380,7 +380,7 @@ function onCellClick( el ) {
         el.textContent = gameState.playerO.mark;
     }
 
-    if ( isWinner( gameState.currentPlayer ) ) {
+    if ( isWinner( row, column, gameState.currentPlayer ) ) {
         gameState.endState.finishType = FinishType.Win;
     } else if ( !hasAvailableTurns() ) {
         gameState.endState.finishType = FinishType.Draw;
@@ -441,124 +441,96 @@ function hasAvailableTurns() {
     return result;
 }
 
-function isWinner( playerMark ) {
-    const arrayRow = ( arr, n ) => arr[ n ];
-    const arrayColumn = ( arr, n ) => arr.map( x => x[ n ] );
+function isWinner( currentRow, currentColumn, playerMark ) {
+    const isWinningLengthReached = ( arr ) => ( arr.length >= gameState.requiredWinLength );
+    const newFieldLine = () => { return { cells: [], positions: [] }; }
 
-    // Check win by row
-    for ( let i = 0; i < gameState.fieldRows; i++ ) {
-        const cells = arrayRow( gameState.field, i );
+    const getRow = ( row ) => {
+        let line = newFieldLine();
+        line.cells = gameState.field[ row ];
+        for ( let i = 0; i < gameState.fieldColumns; i++ ) {
+            line.positions.push( { 'row': row, 'column': i } );
+        }
+        return line;
+    };
+
+    const getColumn = ( column ) => {
+        let line = newFieldLine();
+        line.cells = gameState.field.map( x => x[ column ] );
+        for ( let i = 0; i < gameState.fieldRows; i++ ) {
+            line.positions.push( { 'row': i, 'column': column } );
+        }
+        return line;
+    };
+
+    const getDirectDiagonal = ( row, column ) => {
+        let line = newFieldLine();
+        let d = Math.min( row, column );
+        let r = row - d;
+        let c = column - d;
+        while ( ( r < gameState.fieldRows ) && ( c < gameState.fieldColumns ) ) {
+            line.cells.push( gameState.field[ r ][ c ] );
+            line.positions.push( { 'row': r, 'column': c } );
+            r++;
+            c++;
+        }
+        return line;
+    };
+
+    const getReverseDiagonal = ( row, column ) => {
+        let line = newFieldLine();
+        let d = Math.min( gameState.fieldRows - row - 1, column );
+        let r = row + d;
+        let c = column - d;
+        while ( ( r >= 0 ) && ( c < gameState.fieldColumns ) ) {
+            line.cells.push( gameState.field[ r ][ c ] );
+            line.positions.push( { 'row': r, 'column': c } );
+            r--;
+            c++;
+        }
+        return line;
+    };
+
+    const checkLineForWin = ( line, mark ) => {
         let cellPositions = [];
-        for ( let j = 0; j < gameState.fieldColumns; j++ ) {
-            if ( cells[ j ] == playerMark ) {
-                cellPositions.push( { row: i, column: j } );
+        for ( let i = 0; i < line.cells.length; i++ ) {
+            if ( line.cells[ i ] == playerMark ) {
+                let pos = line.positions[ i ];
+                cellPositions.push( { row: pos.row, column: pos.column } );
             } else {
                 // Winning length reached before other gamer mark
-                if ( cellPositions.length >= gameState.requiredWinLength ) {
+                if ( isWinningLengthReached( cellPositions ) ) {
                     setWinnerState( cellPositions );
                     return true;
                 }
                 cellPositions.length = 0;
             }
         }
-        if ( cellPositions.length >= gameState.requiredWinLength ) {
+        if ( isWinningLengthReached( cellPositions ) ) {
             setWinnerState( cellPositions );
             return true;
         }
+        return false;
+    };
+
+    // Check marked cell row
+    if ( checkLineForWin( getRow( currentRow ), playerMark ) ) {
+        return true;
     }
 
-    // Check win by column
-    for ( let i = 0; i < gameState.fieldColumns; i++ ) {
-        const cells = arrayColumn( gameState.field, i );
-        let cellPositions = [];
-        for ( let j = 0; j < gameState.fieldRows; j++ ) {
-            if ( cells[ j ] == playerMark ) {
-                cellPositions.push( { row: j, column: i } );
-            } else {
-                // Winning length reached before other gamer mark
-                if ( cellPositions.length >= gameState.requiredWinLength ) {
-                    setWinnerState( cellPositions );
-                    return true;
-                }
-                cellPositions.length = 0;
-            }
-        }
-        if ( cellPositions.length >= gameState.requiredWinLength ) {
-            setWinnerState( cellPositions );
-            return true;
-        }
+    // Check marked cell column
+    if ( checkLineForWin( getColumn( currentColumn ), playerMark ) ) {
+        return true;
     }
 
-    //
-    // Check win diagonally
-    //
+    // Check marked cell direct diagonal
+    if ( checkLineForWin( getDirectDiagonal( currentRow, currentColumn ), playerMark ) ) {
+        return true;
+    }
 
-    // Determine count and direction of validation squares
-    const rowSquares = gameState.fieldRows - gameState.requiredWinLength + 1;       // vertical movement
-    const columnSquares = gameState.fieldColumns - gameState.requiredWinLength + 1; // horizontal movement
-    // According to longest field side slide "square" window over game field
-    // horizontally or vertically. Check square diagonal win condition by
-    // direct or reverse diagonal in each square
-    for ( let rPos = 0; rPos < rowSquares; rPos++ ) {
-        for ( let cPos = 0; cPos < columnSquares; cPos++ ) {
-            let directDiagonal = {
-                cells: [],
-                positions: []
-            }
-            let reverseDiagonal = {
-                cells: [],
-                positions: []
-            }
-            for ( let i = 0; i < gameState.requiredWinLength; i++ ) {
-                let directRow = rPos + i;
-                let reverseRow = rPos + gameState.requiredWinLength - i - 1;
-                let column = cPos + i;
-                directDiagonal.cells.push( gameState.field[ directRow ][ column ] );
-                directDiagonal.positions.push( { row: directRow, 'column': column } );
-                reverseDiagonal.cells.push( gameState.field[ reverseRow ][ column ] );
-                reverseDiagonal.positions.push( { row: reverseRow, 'column': column } );
-            }
-            // Win by direct diagonal
-            let cellPositions = [];
-
-            for ( let i = 0; i < directDiagonal.cells.length; i++ ) {
-                if ( directDiagonal.cells[ i ] == playerMark ) {
-                    let pos = directDiagonal.positions[ i ];
-                    cellPositions.push( { row: pos.row, column: pos.column } );
-                } else {
-                    // Winning length reached before other gamer mark
-                    if ( cellPositions.length >= gameState.requiredWinLength ) {
-                        setWinnerState( cellPositions );
-                        return true;
-                    }
-                    cellPositions.length = 0;
-                }
-            }
-            if ( cellPositions.length >= gameState.requiredWinLength ) {
-                setWinnerState( cellPositions );
-                return true;
-            }
-
-            cellPositions.length = 0;
-
-            for ( let i = 0; i < reverseDiagonal.cells.length; i++ ) {
-                if ( reverseDiagonal.cells[ i ] == playerMark ) {
-                    let pos = reverseDiagonal.positions[ i ];
-                    cellPositions.push( { row: pos.row, column: pos.column } );
-                } else {
-                    // Winning length reached before other gamer mark
-                    if ( cellPositions.length >= gameState.requiredWinLength ) {
-                        setWinnerState( cellPositions );
-                        return true;
-                    }
-                    cellPositions.length = 0;
-                }
-            }
-            if ( cellPositions.length >= gameState.requiredWinLength ) {
-                setWinnerState( cellPositions );
-                return true;
-            }
-        }
+    // Check marked cell reverse diagonal
+    if ( checkLineForWin( getReverseDiagonal( currentRow, currentColumn ), playerMark ) ) {
+        return true;
     }
 
     return false;
@@ -589,8 +561,6 @@ function showWin() {
 document.addEventListener( 'DOMContentLoaded', ( event ) => {
     resetGame();
 } );
-
-//window.addEventListener( 'load', resetGame );
 
 document.getElementById( 'button-reset' ).addEventListener( 'click', function() {
     resetGame();
