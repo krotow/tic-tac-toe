@@ -63,10 +63,10 @@ Online demo address: http://tic-tac-toe-1gk.pages.dev/
 
 # For developers
 
-The game is designed as a single page [Node.js] (https://nodejs.org/en/) Web
+The game is designed as a single page [Node.js](https://nodejs.org/en/) Web
 application, using only HTML, CSS and JavaScript. To ensure automatic
-deplayment into [Cloudfare Pages] (https://pages.cloudflare.com/), it have
-rudimentary added to application [Next.js] (https://nextjs.org/) support.
+deplayment into [Cloudfare Pages](https://pages.cloudflare.com/), it have
+rudimentary [Next.js](https://nextjs.org/) support.
 
 For local demo, the game must be downloaded and installed from the Github repository
 
@@ -85,4 +85,4 @@ npm run dev
 Then you can open a demo of the game in your browser. Local address: http://localhost:3000/
 
 ---
-&copy; 2021, Janis Baumanis, [ISC] (https://choosealicense.com/licenses/isc/)
+&copy; 2021, Janis Baumanis, [ISC](https://choosealicense.com/licenses/isc/)
